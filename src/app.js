@@ -7,7 +7,7 @@ class App {
   constructor() {
     this.server = express();
 
-    mongoose.connect('mongodb+srv://maiamateusotavio:vd6TOKjCxJJXCeQ5@ingodevmongo.byuri89.mongodb.net/?retryWrites=true&w=majority&appName=InGoDevMongo');
+    mongoose.connect('mongodb+srv://maiamateusotavio:1Q7mdcHIpMQUJOQ9@ingodevmongo.byuri89.mongodb.net/?retryWrites=true&w=majority&appName=InGoDevMongo');
 
     this.middlewares();
     this.routes();

@@ -1,8 +1,10 @@
-import { Schema } from "mongoose";
+import { Schema, model} from "mongoose";
 
 const PropostaSchema = new Schema({
-    numero: Number,
+    id: String,
+    numero: String,
     status: String,
+    tipo: String,
     usuario:{
         type: Schema.Types.ObjectId,
         ref: 'Usuario'
