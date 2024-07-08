@@ -1,5 +1,5 @@
 import Proposta from "../models/Proposta";
-import Usuario from "../models/Usuario"
+import Usuario from "../models/Usuario";
 
 class PropostaController {
   async indexAll(req, res) {
@@ -17,14 +17,16 @@ class PropostaController {
   }
 
   async store(req, res) {
+    const { arquivo } = req.file;
     const { usuario_id } = req.headers;
     const { numero, status, tipo } = req.body;
 
     const proposta = await Proposta.create({
+      arquivo: arquivo,
       numero: numero,
       status: status,
       tipo: tipo,
-      usuario: usuario_id,
+      usuario: usuario_id
     });
 
     return res.json(proposta);
