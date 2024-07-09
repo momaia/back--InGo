@@ -1,5 +1,6 @@
 import Proposta from "../models/Proposta";
 import Usuario from "../models/Usuario";
+import Cliente from "../models/Cliente";
 
 class PropostaController {
   async indexAll(req, res) {
@@ -9,24 +10,32 @@ class PropostaController {
   }
 
   async index(req, res) {
-    const { numero } = req.params;
+    const { proposta_id } = req.params;
 
-    const propostas = await Proposta.find({ numero });
+    const proposta = await Proposta.findById(proposta_id);
 
-    return res.json(propostas);
+    return res.json(proposta);
   }
 
   async store(req, res) {
-    const { arquivo } = req.file;
-    const { usuario_id } = req.headers;
-    const { numero, status, tipo } = req.body;
+    const { usuario_id, cliente_id } = req.headers;
+    const { status, data, produto } = req.body;
+
+    const usuario = await Usuario.findById(usuario_id);
+
+    if (!usuario)
+      return res.status(500).json({ error: "Usuário não encontrado" });
+
+    const cliente = await Cliente.findById(cliente_id);
+
+    if (!cliente)
+      return res.status(500).json({ error: "Cliente não encontrado" });
 
     const proposta = await Proposta.create({
-      arquivo: arquivo,
-      numero: numero,
       status: status,
-      tipo: tipo,
-      usuario: usuario_id
+      data: data,
+      usuario: usuario,
+      cliente: cliente,
     });
 
     return res.json(proposta);
@@ -36,12 +45,12 @@ class PropostaController {
     const { usuario_id } = req.headers;
     const { proposta_id } = req.params;
     const { status, tipo } = req.body;
-    
+
     const proposta = await Proposta.findById(proposta_id);
     const usuario = await Usuario.findById(usuario_id);
 
-    if(String(proposta.usuario) !== String(usuario._id)){
-      return res.status(401).json({error: 'Não autorizado'});
+    if (String(proposta.usuario) !== String(usuario._id)) {
+      return res.status(401).json({ error: "Não autorizado" });
     }
 
     await Proposta.updateOne(
@@ -60,15 +69,14 @@ class PropostaController {
     const { usuario_id } = req.headers;
 
     const proposta = await Proposta.findById(proposta_id);
-    const usuario = await Usuario.findById(usuario_id);
 
-    if(String(proposta.usuario) !== String(usuario._id)){
-      return res.status(401).json({error: 'Não autorizado'});
+    if (String(proposta.usuario) !== String(usuario_id)) {
+      return res.status(401).json({ error: "Não autorizado" });
     }
 
     await Proposta.findByIdAndDelete(proposta_id);
 
-    return res.json({ message: 'Proposta deletada com sucesso!' });
+    return res.json({ message: "Proposta deletada com sucesso!" });
   }
 }
 
