@@ -1,33 +1,34 @@
 import Cliente from "../models/Cliente";
 
 class ClienteController {
-  async indexAll(req, res) {
-    const clientes = await Cliente.find();
-    
-    return res.json(clientes);
-  }
+    async indexAll(req, res) {
+        const clientes = await Cliente.find();
 
-  async index(req, res) {
-    const { cliente_id } = req.params;
+        return res.json(clientes);
+    }
 
-    const cliente = await Cliente.findById(cliente_id);
+    async index(req, res) {
+        const { cliente_id } = req.params;
 
-    return res.json(cliente);
-  }
+        const cliente = await Cliente.findById(cliente_id);
 
-  async store(req, res) {
-    const { nome, data_nascimento, documento, empregador, telefone } = req.body;
+        return res.json(cliente);
+    }
 
-    const cliente = await Cliente.create({
-      nome: nome,
-      data_nascimento: data_nascimento,
-      documento: documento,
-      empregador: empregador,
-      telefone: telefone,
-    });
+    async store(req, res) {
+        const { nome, data_nascimento, documento, empregador, telefone } =
+            req.body;
 
-    return res.json(cliente);
-  }
+        const cliente = await Cliente.create({
+            nome: nome,
+            data_nascimento: data_nascimento,
+            documento: documento,
+            empregador: empregador,
+            telefone: telefone,
+        });
+
+        return res.json(cliente);
+    }
 }
 
 export default new ClienteController();
