@@ -1,6 +1,7 @@
 import Proposta from "../models/Proposta";
 import Usuario from "../models/Usuario";
 import Cliente from "../models/Cliente";
+import * as yup from "yup";
 
 class PropostaController {
   async indexAll(req, res) {
@@ -18,18 +19,31 @@ class PropostaController {
   }
 
   async store(req, res) {
+    const schema = yup.object().shape({
+      status: yup.string().required('O status é obrigatório.'),
+      data: yup.date().required('A data é obrigatória.'),
+    });
+
     const { usuario_id, cliente_id } = req.headers;
-    const { status, data, produto } = req.body;
+    const { status, data } = req.body;
 
     const usuario = await Usuario.findById(usuario_id);
 
-    if (!usuario)
+    if (!usuario) {
       return res.status(500).json({ error: "Usuário não encontrado" });
+    }
 
     const cliente = await Cliente.findById(cliente_id);
 
-    if (!cliente)
+    if (!cliente) {
       return res.status(500).json({ error: "Cliente não encontrado" });
+    }
+
+    try {
+      await schema.validate(req.body, { abortEarly: false });
+    } catch (err) {
+      return res.status(400).json({ errors: err.errors });
+    }
 
     const proposta = await Proposta.create({
       status: status,
@@ -42,6 +56,11 @@ class PropostaController {
   }
 
   async update(req, res) {
+    const schema = yup.object().shape({
+      status: yup.string().required('O status é obrigatório.'),
+      data: yup.date().required('A data é obrigatória.'),
+    });
+
     const { usuario_id } = req.headers;
     const { proposta_id } = req.params;
     const { status, tipo } = req.body;
@@ -51,6 +70,12 @@ class PropostaController {
 
     if (String(proposta.usuario) !== String(usuario._id)) {
       return res.status(401).json({ error: "Não autorizado" });
+    }
+
+    try {
+      await schema.validate(req.body, { abortEarly: false });
+    } catch (err) {
+      return res.status(400).json({ errors: err.errors });
     }
 
     await Proposta.updateOne(
